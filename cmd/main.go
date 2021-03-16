@@ -3,13 +3,13 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 	"log"
+	"os"
 	_ "strconv"
 	"strings"
 	"time"
 
-	_ "github.com/gdamore/tcell"
+	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 )
 
@@ -19,13 +19,20 @@ func main() {
 	app := tview.NewApplication()
 	// create TextView
 	textView := tview.NewTextView().
-	    SetDynamicColors(true).SetWordWrap(true).SetChangedFunc(func() { app.Draw() })
+		SetDynamicColors(true).SetWordWrap(true).SetChangedFunc(func() { app.Draw() })
 	textView.SetBorder(true).SetTitle("gist list")
+	// create Table
+	table := tview.NewTable().
+		SetBorders(false).
+		Select(0, 0).
+		SetFixed(1, 1).
+		SetSelectable(true, false)
 	flex := tview.NewFlex().
-		AddItem(textView, 0, 1, false).
+		AddItem(textView, 0, 1, true).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(tview.NewBox().SetBorder(true).SetTitle("description"), 0, 1, false).
-			AddItem(tview.NewBox().SetBorder(true).SetTitle("gist content"), 0, 10, false), 0, 2, false)
+			AddItem(tview.NewBox().SetBorder(true).SetTitle("gist content"), 0, 10, false), 0, 2, false).
+		AddItem(table, 0, 3, true)
 
 	numSelections := 0
 	go func() {
@@ -42,13 +49,60 @@ func main() {
 		}
 	}()
 
+	// set cell
+	table.SetCell(0, 0, &tview.TableCell{
+		Text:            " aaa",
+		NotSelectable:   true,
+		Align:           tview.AlignLeft,
+		Color:           tcell.ColorYellow,
+		BackgroundColor: tcell.ColorDefault,
+	})
+	table.SetCell(1, 0, &tview.TableCell{
+		Text:            " aaa",
+		NotSelectable:   true,
+		Align:           tview.AlignLeft,
+		Color:           tcell.ColorYellow,
+		BackgroundColor: tcell.ColorDefault,
+	})
+	table.SetCell(2, 0, &tview.TableCell{
+		Text:            " aaa",
+		NotSelectable:   true,
+		Align:           tview.AlignLeft,
+		Color:           tcell.ColorYellow,
+		BackgroundColor: tcell.ColorDefault,
+	})
+
 	// file list
 	files := listFiles()
 	for _, f := range files {
-	    fmt.Fprintf(textView, "%s \n", " " + f.Name())
+		fmt.Fprintf(textView, "%s \n", " "+f.Name())
 	}
 
 	// key bind
+	// global
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyTab:
+			app.SetFocus(table)
+		default:
+			return event
+		}
+		return event
+	})
+	// textview
+	textView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyCtrlN:
+			textView.SetText(textView.GetText(true) + " ctrl+n")
+		case tcell.KeyCtrlP:
+			textView.SetText(textView.GetText(true) + " ctrl+p")
+		case tcell.KeyEnter:
+			textView.SetText(textView.GetText(true) + " return")
+		default:
+			return nil
+		}
+		return event
+	})
 
 	// set root
 	if err := app.SetRoot(flex, true).EnableMouse(true).Run(); err != nil {
@@ -58,9 +112,9 @@ func main() {
 }
 
 func listFiles() []os.FileInfo {
-    files, err := ioutil.ReadDir("./")
-    if err != nil {
-	log.Fatal(err)
-    }
-    return files
+	files, err := ioutil.ReadDir("./")
+	if err != nil {
+		log.Fatal(err)
+	}
+	return files
 }
