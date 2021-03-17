@@ -15,6 +15,8 @@ import (
 
 const corporate = "aaa bbb the ccc ddd eee fff ggg"
 
+var isTable bool = false
+
 func main() {
 	app := tview.NewApplication()
 	// create TextView
@@ -23,12 +25,12 @@ func main() {
 	textView.SetBorder(true).SetTitle("gist list")
 	// create Table
 	table := tview.NewTable().
-		SetBorders(false).
+		SetBorders(true).
 		Select(0, 0).
 		SetFixed(1, 1).
 		SetSelectable(true, false)
 	flex := tview.NewFlex().
-		AddItem(textView, 0, 1, true).
+		AddItem(textView, 0, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(tview.NewBox().SetBorder(true).SetTitle("description"), 0, 1, false).
 			AddItem(tview.NewBox().SetBorder(true).SetTitle("gist content"), 0, 10, false), 0, 2, false).
@@ -52,21 +54,21 @@ func main() {
 	// set cell
 	table.SetCell(0, 0, &tview.TableCell{
 		Text:            " aaa",
-		NotSelectable:   true,
+		NotSelectable:   false,
 		Align:           tview.AlignLeft,
 		Color:           tcell.ColorYellow,
 		BackgroundColor: tcell.ColorDefault,
 	})
 	table.SetCell(1, 0, &tview.TableCell{
 		Text:            " aaa",
-		NotSelectable:   true,
+		NotSelectable:   false,
 		Align:           tview.AlignLeft,
 		Color:           tcell.ColorYellow,
 		BackgroundColor: tcell.ColorDefault,
 	})
 	table.SetCell(2, 0, &tview.TableCell{
 		Text:            " aaa",
-		NotSelectable:   true,
+		NotSelectable:   false,
 		Align:           tview.AlignLeft,
 		Color:           tcell.ColorYellow,
 		BackgroundColor: tcell.ColorDefault,
@@ -83,7 +85,13 @@ func main() {
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyTab:
-			app.SetFocus(table)
+			if isTable {
+				app.SetFocus(table)
+				isTable = !isTable
+			} else {
+				app.SetFocus(textView)
+				isTable = !isTable
+			}
 		default:
 			return event
 		}
@@ -99,9 +107,18 @@ func main() {
 		case tcell.KeyEnter:
 			textView.SetText(textView.GetText(true) + " return")
 		default:
-			return nil
+			return event
 		}
 		return event
+	})
+
+	// table select func
+	table.SetDoneFunc(func(key tcell.Key) {
+		if key == tcell.KeyEnter {
+			table.SetSelectable(true, false)
+		}
+	}).SetSelectedFunc(func(row int, col int) {
+		table.GetCell(row, col).SetTextColor(tcell.ColorRed)
 	})
 
 	// set root
