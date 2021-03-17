@@ -25,10 +25,10 @@ func main() {
 	textView.SetBorder(true).SetTitle("gist list")
 	// create Table
 	table := tview.NewTable().
-		SetBorders(true).
 		Select(0, 0).
 		SetFixed(1, 1).
 		SetSelectable(true, false)
+	table.SetBorder(true)
 	flex := tview.NewFlex().
 		AddItem(textView, 0, 1, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
