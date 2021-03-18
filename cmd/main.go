@@ -1,10 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	_ "fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	_ "strconv"
 	"strings"
@@ -18,7 +19,32 @@ import (
 
 var isTable bool = false
 
+type Gist struct {
+    Url string `json:"url"`
+    Id string `json:"id"`
+    Files map[string]FilesInfo `json:"files"`
+}
+type FilesInfo struct {
+    Filename string `json:"filename"`
+    RawUrl string `json:"raw_url"`
+}
+
 func main() {
+    response := getGistList("user")
+    var gist []Gist
+    if err := json.Unmarshal(response, &gist); err != nil {
+	log.Fatal(err)
+    }
+    for _, g := range gist {
+	fmt.Println(g.Url)
+	fmt.Println(g.Id)
+	for _, v := range g.Files {
+	    fmt.Println(v.Filename)
+	    fmt.Println(v.RawUrl)
+	}
+	fmt.Println()
+    }
+    return
 	app := tview.NewApplication()
 	// create textView
 	textView := tview.NewTextView().
@@ -118,12 +144,21 @@ func listFiles() []os.FileInfo {
 func getContent(file string) string {
 	bytes, err := ioutil.ReadFile("./" + strings.Trim(file, " "))
 	if err != nil {
-		//log.Fatal(err)
-		fmt.Println(err)
+		log.Fatal(err)
 	}
 	return string(bytes)
 }
 
+func getGistList(username string) []byte {
+    url := "https://api.github.com/users/atsushi-kitazawa/gists"
+    response, err := http.Get(url)
+    if err != nil {
+	log.Fatal(err)
+    }
+    bytes, _ := ioutil.ReadAll(response.Body)
+
+   return bytes
+}
 //numSelections := 0
 //	go func() {
 //		for _, word := range strings.Split(corporate, " ") {
