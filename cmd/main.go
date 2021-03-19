@@ -1,11 +1,11 @@
 package main
 
 import (
+	_ "fmt"
 	"github.com/atsushi-kitazawa/gist_viewer/gist"
-	"fmt"
-	"io/ioutil"
-	"log"
-	"os"
+	_ "io/ioutil"
+	_ "log"
+	_ "os"
 	_ "strconv"
 	"strings"
 	_ "time"
@@ -20,11 +20,12 @@ const username = "atsushi-kitazawa"
 var isTable bool = false
 
 func main() {
-    gist := gist.NewGist(username)
-    for _, v := range gist {
-	fmt.Println(v.Url)
-    }
-    return 
+	gistInfo := gist.NewGist(username)
+	//for _, v := range gist {
+	//	fmt.Println(v.Url)
+	//    }
+	//    return
+
 	app := tview.NewApplication()
 	// create textView
 	textView := tview.NewTextView().
@@ -44,21 +45,21 @@ func main() {
 	// create flex
 	flex := tview.NewFlex().
 		AddItem(table, 0, 1, true).
-		//AddItem(textView, 0 , 2, false).
 		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
 			AddItem(description, 0, 1, false).
 			AddItem(content, 0, 10, false), 0, 2, false)
 
 	// list file with table
-	files := listFiles()
-	for i, f := range files {
-		table.SetCell(i, 0, &tview.TableCell{
-			Text:            " " + f.Name(),
-			NotSelectable:   false,
-			Align:           tview.AlignLeft,
-			Color:           tcell.ColorYellow,
-			BackgroundColor: tcell.ColorDefault,
-		})
+	for i, g := range gistInfo {
+		for _, f := range g.Files {
+			table.SetCell(i, 0, &tview.TableCell{
+				Text:            " " + f.Filename,
+				NotSelectable:   false,
+				Align:           tview.AlignLeft,
+				Color:           tcell.ColorYellow,
+				BackgroundColor: tcell.ColorDefault,
+			})
+		}
 	}
 
 	// key bind
@@ -99,11 +100,10 @@ func main() {
 			table.SetSelectable(true, false)
 		}
 	}).SetSelectedFunc(func(row int, col int) {
-		table.GetCell(row, col).SetTextColor(tcell.ColorRed)
 		row, col = table.GetSelection()
 		cell := table.GetCell(row, col)
-		description.SetText(cell.Text)
-		content.SetText(getContent(cell.Text))
+		description.SetText(gist.GetId(strings.Trim(cell.Text, " ")) + "\n" + gist.GetUrl(strings.Trim(cell.Text, " ")))
+		content.SetText(gist.GetContent(gist.GetRawUrl(strings.Trim(cell.Text, " "))))
 	})
 
 	// set root
@@ -111,22 +111,6 @@ func main() {
 		panic(err)
 	}
 
-}
-
-func listFiles() []os.FileInfo {
-	files, err := ioutil.ReadDir("./")
-	if err != nil {
-		log.Fatal(err)
-	}
-	return files
-}
-
-func getContent(file string) string {
-	bytes, err := ioutil.ReadFile("./" + strings.Trim(file, " "))
-	if err != nil {
-		log.Fatal(err)
-	}
-	return string(bytes)
 }
 
 //numSelections := 0
