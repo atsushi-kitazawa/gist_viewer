@@ -21,10 +21,6 @@ var isTable bool = false
 
 func main() {
 	gistInfo := gist.NewGist(username)
-	//for _, v := range gist {
-	//	fmt.Println(v.Url)
-	//    }
-	//    return
 
 	app := tview.NewApplication()
 	// create textView
@@ -49,7 +45,7 @@ func main() {
 			AddItem(description, 0, 1, false).
 			AddItem(content, 0, 10, false), 0, 2, false)
 
-	// list file with table
+	// list gist with table
 	for i, g := range gistInfo {
 		for _, f := range g.Files {
 			table.SetCell(i, 0, &tview.TableCell{
@@ -61,38 +57,6 @@ func main() {
 			})
 		}
 	}
-
-	// key bind
-	// global
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyTab:
-			if isTable {
-				app.SetFocus(table)
-				isTable = !isTable
-			} else {
-				app.SetFocus(textView)
-				isTable = !isTable
-			}
-		default:
-			return event
-		}
-		return event
-	})
-	// textview
-	textView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		switch event.Key() {
-		case tcell.KeyCtrlN:
-			textView.SetText(textView.GetText(true) + " ctrl+n")
-		case tcell.KeyCtrlP:
-			textView.SetText(textView.GetText(true) + " ctrl+p")
-		case tcell.KeyEnter:
-			textView.SetText(textView.GetText(true) + " return")
-		default:
-			return event
-		}
-		return event
-	})
 
 	// table select func
 	table.SetDoneFunc(func(key tcell.Key) {
