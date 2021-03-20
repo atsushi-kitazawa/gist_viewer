@@ -27,6 +27,11 @@ type GistContent struct {
 	*tview.TextView
 }
 
+type Forcus struct {
+    order []tview.Box
+    now int
+}
+
 func InitTview(app *tview.Application) {
 	List = &GistList{tview.NewTable().
 		Select(0, 0).
@@ -46,5 +51,12 @@ func InitTview(app *tview.Application) {
 			AddItem(Description, 0, 1, false).
 			AddItem(Content, 0, 10, false), 0, 2, false)}
 	_ = Flex
+}
 
+func MoveFocus(app *tview.Application) {
+    if List.HasFocus() {
+	app.SetFocus(Content)
+    } else  {
+	app.SetFocus(List)
+    }
 }

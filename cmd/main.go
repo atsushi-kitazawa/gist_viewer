@@ -11,6 +11,7 @@ import (
 
 	"github.com/atsushi-kitazawa/gist_viewer/gist"
 	"github.com/atsushi-kitazawa/gist_viewer/gui"
+	"github.com/atsushi-kitazawa/gist_viewer/keybinds"
 
 	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
@@ -31,6 +32,8 @@ func main() {
 	description := gui.Description
 	content := gui.Content
 	flex := gui.Flex
+
+	keybinds.SetGlobal(app)
 
 	// list gist with table
 	for i, g := range gistInfo {

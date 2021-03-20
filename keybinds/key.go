@@ -1,30 +1,23 @@
 package keybinds
 
 import (
+	"github.com/atsushi-kitazawa/gist_viewer/gui"
+	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
-	_ "github.com/gdamore/tcell"
 )
 
-var isTable = false
-
-func SetGlobal(app tview.Application) {
+func SetGlobal(app *tview.Application) {
     // key bind
 	// global
-	//app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-	//	switch event.Key() {
-	//	case tcell.KeyTab:
-	//		if isTable {
-	//			app.SetFocus(table)
-	//			isTable = !isTable
-	//		} else {
-	//			app.SetFocus(textView)
-	//			isTable = !isTable
-	//		}
-	//	default:
-	//		return event
-	//	}
-	//	return event
-	//})
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyTab:
+		    gui.MoveFocus(app)
+		default:
+			return event
+		}
+		return event
+	})
 	// textview
 	//textView.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 	//	switch event.Key() {
