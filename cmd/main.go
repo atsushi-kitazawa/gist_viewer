@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	_ "fmt"
 	_ "io/ioutil"
 	_ "log"
@@ -17,13 +18,15 @@ import (
 	"github.com/rivo/tview"
 )
 
-const username = "atsushi-kitazawa"
-
 var isTable bool = false
 
 func main() {
+	// argument
+	username := flag.String("u", "", "gist view target username")
+	flag.Parse()
+
 	// get gist infomation.
-	gistInfo := gist.NewGist(username)
+	gistInfo := gist.NewGist(*username)
 
 	// initialization tview component.
 	app := tview.NewApplication()
@@ -33,6 +36,7 @@ func main() {
 	content := gui.Content
 	flex := gui.Flex
 
+	// set key binds
 	keybinds.SetGlobal(app)
 
 	// list gist with table
