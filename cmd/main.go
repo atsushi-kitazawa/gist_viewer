@@ -16,7 +16,6 @@ import (
 	"github.com/rivo/tview"
 )
 
-// const corporate = "aaa bbb the ccc ddd eee fff ggg"
 const username = "atsushi-kitazawa"
 
 var isTable bool = false
@@ -54,8 +53,8 @@ func main() {
 	}).SetSelectedFunc(func(row int, col int) {
 		row, col = gistList.GetSelection()
 		cell := gistList.GetCell(row, col)
-		description.SetText(gist.GetId(strings.Trim(cell.Text, " ")) + "\n" + gist.GetUrl(strings.Trim(cell.Text, " ")))
-		content.SetText(gist.GetContent(gist.GetRawUrl(strings.Trim(cell.Text, " "))))
+		description.SetText(gist.GetId(trimSpace(cell.Text)) + "\n" + gist.GetUrl(trimSpace(cell.Text)))
+		content.SetText(gist.GetContent(gist.GetRawUrl(trimSpace(cell.Text))))
 	})
 
 	// set root
@@ -65,17 +64,6 @@ func main() {
 
 }
 
-//numSelections := 0
-//	go func() {
-//		for _, word := range strings.Split(corporate, " ") {
-//			if word == "the" {
-//				word = "[#ff0000]the[white]"
-//			}
-//			if word == "to" {
-//				word = fmt.Sprintf(`["%d"]to[""]`, numSelections)
-//				numSelections++
-//			}
-//			//fmt.Fprintf(textView, "%s ", word)
-//			time.Sleep(75 * time.Millisecond)
-//		}
-//	}()
+func trimSpace(s string) string {
+    return strings.Trim(s, " ")
+}

@@ -1,6 +1,8 @@
 package gui
 
-import "github.com/rivo/tview"
+import (
+	"github.com/rivo/tview"
+)
 
 var (
 	Flex        *GistFlex        = &GistFlex{}
@@ -44,4 +46,5 @@ func InitTview(app *tview.Application) {
 			AddItem(Description, 0, 1, false).
 			AddItem(Content, 0, 10, false), 0, 2, false)}
 	_ = Flex
+
 }
