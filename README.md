@@ -1,13 +1,5 @@
 # gist_viewer
-github gist viewer
+This is TUI gist viewer.
+This viewer is written by Go.
 
-# todo
-* todo1
-* todo2
-* todo3
-
-# memo
-* tview使えそうなサンプル
-  * flex
-  * modal (保存するときの確認ダイアログとして）
-  * textview
+![](https://user-images.githubusercontent.com/47269784/111857228-6db8bd00-8973-11eb-8add-50683e853a07.gif)
