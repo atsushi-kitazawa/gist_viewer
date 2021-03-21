@@ -2,7 +2,7 @@ package keybinds
 
 import (
 	"github.com/atsushi-kitazawa/gist_viewer/gui"
-	"github.com/gdamore/tcell"
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
