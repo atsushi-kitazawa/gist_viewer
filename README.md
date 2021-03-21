@@ -2,7 +2,7 @@
 This is TUI gist viewer.
 This viewer is written by Go.
 
-![](https://user-images.githubusercontent.com/47269784/111874506-fb7ac380-89d8-11eb-9672-cdf47b648689.gif)
+![](https://user-images.githubusercontent.com/47269784/111907771-224cfe80-8a9a-11eb-9784-8dca84413192.gif)
 
 # install
 ```sh
